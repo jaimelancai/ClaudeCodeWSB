@@ -67,7 +67,7 @@ Two installers, run in order. Both are interactive and idempotent (safe to re-ru
 
 ```bash
 git clone https://github.com/<you>/ClaudeCodeWSB.git
-cd ClaudeCodeWSB/wsl
+cd ClaudeCodeWSB/linux
 chmod +x install.sh
 ./install.sh
 ```
@@ -77,7 +77,7 @@ This installs Samba, Claude Code, and the sandbox dependencies (bubblewrap, soca
 ### 2. Windows side (PowerShell, no admin required)
 
 ```powershell
-cd ClaudeCodeWSB\windows
+cd ClaudeCodeWSB\win
 powershell -ExecutionPolicy Bypass -File .\install-windows.ps1
 ```
 
