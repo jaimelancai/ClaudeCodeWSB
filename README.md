@@ -65,9 +65,12 @@ Two installers, run in order. Both are interactive and idempotent (safe to re-ru
 
 ### 1. WSL side (inside your Ubuntu distro)
 
+Clone into your WSL home directory (`~`), **not** a Windows path under `/mnt/`. Cloning to `/mnt/c/...` or `/mnt/d/...` from inside WSL fails with `chmod ... Operation not permitted` because NTFS doesn't support Linux file modes — and this is exactly the kind of cross-filesystem friction ClaudeCodeWSB exists to fix.
+
 ```bash
+cd ~
 git clone https://github.com/<you>/ClaudeCodeWSB.git
-cd ClaudeCodeWSB/linux
+cd ClaudeCodeWSB/wsl
 chmod +x install.sh
 ./install.sh
 ```
@@ -77,7 +80,7 @@ This installs Samba, Claude Code, and the sandbox dependencies (bubblewrap, soca
 ### 2. Windows side (PowerShell, no admin required)
 
 ```powershell
-cd ClaudeCodeWSB\win
+cd ClaudeCodeWSB\windows
 powershell -ExecutionPolicy Bypass -File .\install-windows.ps1
 ```
 

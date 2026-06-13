@@ -121,6 +121,19 @@ Something else owns port 445 from the distro's point of view. The most common ca
 
 Check `C:\Users\<you>\.wslconfig` for `networkingMode=mirrored`. This project requires **NAT mode** (the default). Remove the mirrored setting, run `wsl --shutdown`, reopen, and `sudo service smbd restart`.
 
+### `error: chmod ... Operation not permitted` when cloning the repo
+
+You ran `git clone` from inside WSL with the working directory on a Windows drive (`/mnt/c/...`, `/mnt/d/...`). NTFS doesn't support Linux file modes, so git fails to set permissions on its own lock files.
+
+Clone into your WSL home directory instead:
+
+```bash
+cd ~
+git clone https://github.com/<you>/ClaudeCodeWSB.git
+```
+
+The repo lives on ext4 (where git works correctly), and the installer's whole point is to make those files accessible from Windows via the mapped drive — so you don't need them on a Windows drive to work with them from Unity, Visual Studio, or any other Windows tool.
+
 ### `claude: command not found` after install
 
 The PATH entry is added to `~/.bashrc` but your current shell predates it:
