@@ -490,10 +490,14 @@ print_summary() {
     echo "   powershell -ExecutionPolicy Bypass -File windows\\install-windows.ps1"
     echo
     echo "${C_BOLD}4. To use Claude Code:${C_RESET}"
-    echo "   Restart your shell (or source ~/.bashrc), then:"
-    echo "   cd $WORKSPACE_PATH/<your-project>"
-    echo "   claude"
-    echo "   First run will prompt for OAuth authentication."
+    echo "   In your CURRENT shell (the PATH change is not yet active), run:"
+    echo "     ${C_GREEN}export PATH=\"\$HOME/.npm-global/bin:\$PATH\"${C_RESET}"
+    echo "   Then:"
+    echo "     cd $WORKSPACE_PATH/<your-project>"
+    echo "     claude"
+    echo
+    echo "   New WSL shells (after this one) will pick up the PATH automatically."
+    echo "   First Claude Code run will prompt for OAuth authentication."
     echo
     echo "If something goes wrong, see TROUBLESHOOTING.md or run uninstall.sh"
     echo "to restore your previous configuration."
