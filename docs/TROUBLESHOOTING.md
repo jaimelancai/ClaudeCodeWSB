@@ -87,6 +87,45 @@ Drive mappings are per-session and per-elevation. A mapping created in an **admi
 
 ## Unity / Unreal problems
 
+### Errors / asset-database corruption when CREATING a new Unity project on the mapped drive
+
+If you create a brand-new Unity project directly on the mapped drive (Z:), you may
+see a flood of errors during the initial import — compiler errors about missing
+types (CS0246 / CS0234 for InputSystem, TestRunner, etc.), plus the underlying
+cause:
+
+```
+Import Error Code:(5)
+Message: Build asset version error: projectsettings/...asset does not exit in SourceAssetDB
+Has ADB guid but no valid Hash for asset '...'
+```
+
+**Cause.** Creating a project is the most write-intensive thing Unity does — it
+imports thousands of package files and builds its asset database in a rapid,
+concurrent burst. SMB caches and may reorder or delay writes, so Unity records an
+asset's hash and then reads back data that hasn't been consistently flushed,
+corrupting the asset database as it's built. The "missing type" compiler errors are
+downstream symptoms of that corruption, not the real problem.
+
+This affects project **creation/import** only. Opening and working on an
+already-imported project on the share is reliable (that's mostly stable reads plus
+incremental writes).
+
+**Fix — create locally, then move to the share:**
+
+1. Create the new Unity project on a **local Windows path** (e.g. `C:\dev\MyProject`).
+2. Open it once and let Unity finish importing and build its `Library/` folder.
+   Confirm the project is error-free locally.
+3. Close Unity.
+4. Move the entire project folder — **including `Library/`** — onto the share
+   (or into `~/dev` on the WSL side, which is the same location).
+5. Reopen from the mapped drive. Because the asset database is already built and
+   valid, Unity just loads it.
+
+Bring `Library/` along with the move. If you copy everything *except* `Library/`,
+Unity rebuilds it on first open from the share — which re-triggers the same
+write-heavy import that failed in the first place.
+
 ### Unity: "Fatal Error! The project is on case sensitive file system"
 
 Samba's case-insensitivity emulation isn't active. Inside WSL:

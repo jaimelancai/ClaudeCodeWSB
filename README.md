@@ -131,6 +131,13 @@ Both handle partial/failed installs gracefully (best-effort cleanup with per-ite
 - **The drive depends on the WSL VM being alive.** A hidden keepalive process maintains this during your session, but explicit `wsl --shutdown`, Windows updates, or deep sleep can still terminate the VM — hence the Remount shortcut.
 - **The share name must match between the two installers.** If you change it from the default (`dev`) during the WSL install, pass `-ShareName` to the Windows installer.
 - **The Samba share may be reachable on your local network** depending on your WSL networking mode. Use a strong password.
+- **Create Unity projects on a local disk, then move them to the share.** Unity's
+  initial project import writes and hashes thousands of files concurrently, which
+  can corrupt the asset database over SMB. Create/import on a local Windows path,
+  then move the finished project (including its `Library/` folder) onto the share.
+  Working on an already-imported project from the share is reliable; only the
+  initial creation needs a local disk. See TROUBLESHOOTING.md for details.
+
 
 ## Troubleshooting
 
