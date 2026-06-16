@@ -126,6 +126,8 @@ Bring `Library/` along with the move. If you copy everything *except* `Library/`
 Unity rebuilds it on first open from the share — which re-triggers the same
 write-heavy import that failed in the first place.
 
+Note: forcing strict sync = yes / sync always = yes in the Samba config does not resolve this — it slows all I/O significantly and the import still corrupts. Create locally and move.
+
 ### Unity: "Fatal Error! The project is on case sensitive file system"
 
 Samba's case-insensitivity emulation isn't active. Inside WSL:
