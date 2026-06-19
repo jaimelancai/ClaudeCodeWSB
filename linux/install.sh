@@ -96,7 +96,7 @@ BACKUP_DIR=$BACKUP_DIR
 USERNAME=$USERNAME
 WORKSPACE_PATH=$WORKSPACE_PATH
 SHARE_NAME=$SHARE_NAME
-INSTALLED_PACKAGES=samba,samba-common-bin,bubblewrap,socat,nodejs
+INSTALLED_PACKAGES=samba,samba-common-bin,bubblewrap,socat,nodejs,git-lfs
 INSTALLED_NPM_GLOBALS=@anthropic-ai/claude-code
 EOF
 }
@@ -233,7 +233,7 @@ gather_config() {
     echo "  User:         $USERNAME"
     echo "  Workspace:    $WORKSPACE_PATH"
     echo "  Share name:   $SHARE_NAME"
-    echo "  Will install: Samba, bubblewrap, socat, Node.js LTS, Claude Code"
+    echo "  Will install: Samba, bubblewrap, socat, Git, Git LFS, Node.js LTS, Claude Code"
     echo
     local confirm
     confirm=$(prompt "Proceed with installation? (y/N)" "N")
@@ -313,9 +313,15 @@ install_packages() {
 
     info "Installing core dependencies..."
     sudo apt-get install -y --no-install-recommends \
-        curl ca-certificates gnupg git ripgrep less procps \
+        curl ca-certificates gnupg git git-lfs ripgrep less procps \
         bubblewrap socat \
         samba samba-common-bin
+
+    # Initialize Git LFS for this user. Game projects very commonly track art,
+    # audio, and other binaries with LFS; without it, git in WSL hashes the raw
+    # binary instead of the LFS pointer and reports phantom "modified" files
+    # that a Windows git (which has LFS) considers clean.
+    git lfs install >/dev/null 2>&1 || warn "git lfs install reported an issue; run 'git lfs install' manually if LFS files misbehave."
 
     ok "System packages installed."
     mark_step "PACKAGES"
